@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Track } from '../types/music';
 
@@ -22,6 +21,7 @@ interface MusicContextProps {
   createPlaylist: (name: string) => void;
   nextTrack: () => void;
   prevTrack: () => void;
+  addToQueue: (track: Track) => void;
 }
 
 const MusicContext = createContext<MusicContextProps | undefined>(undefined);
@@ -231,6 +231,20 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  // Function to add a track to the queue
+  const addToQueue = (track: Track) => {
+    setQueue(prevQueue => {
+      // Check if track already exists in queue
+      const trackExists = prevQueue.some(existingTrack => existingTrack.id === track.id);
+      
+      if (!trackExists) {
+        return [...prevQueue, track];
+      }
+      
+      return prevQueue;
+    });
+  };
+
   return (
     <MusicContext.Provider
       value={{
@@ -252,7 +266,8 @@ export const MusicProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         addToPlaylist,
         createPlaylist,
         nextTrack,
-        prevTrack
+        prevTrack,
+        addToQueue
       }}
     >
       {children}
